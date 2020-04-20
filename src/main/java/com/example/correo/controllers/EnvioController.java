@@ -21,13 +21,34 @@ public class EnvioController {
     }
     /*Me gustaria tener un ejemplo del put mapping*/
     @PostMapping(value = "/saveCarta")
-    public ResponseEntity<Envio> saveCarta(Long remitenteId, Long destinatarioId) {
+    public ResponseEntity<EnvioResponse> saveCarta(Long remitenteId, Long destinatarioId) {
+        Envio envio = envioService.saveCarta(remitenteId, destinatarioId);
 
-        return ResponseEntity.ok(envioService.saveCarta(remitenteId, destinatarioId));
+        PersonaResponse remitente = PersonaResponse.builder()
+                .nombre(envio.getRemitente().getNombre())
+                .apellido(envio.getRemitente().getApellido())
+                .direccion(envio.getRemitente().getDireccion())
+                .build();
+
+        PersonaResponse destinatario = PersonaResponse.builder()
+                .nombre(envio.getDestinatario().getNombre())
+                .apellido(envio.getDestinatario().getApellido())
+                .direccion(envio.getDestinatario().getDireccion())
+                .build();
+
+        EnvioResponse response = EnvioResponse.builder()
+                .peso(envio.getPeso())
+                .ancho(envio.getAncho())
+                .alto(envio.getAlto())
+                .destinatario(destinatario)
+                .remitente(remitente)
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping(value = "/savePaquete")
-    public ResponseEntity<Envio> savePaquete(double peso, double alto, double ancho, Long remitenteId, Long destinatarioId) {
+    public ResponseEntity<EnvioResponse> savePaquete(double peso, double alto, double ancho, Long remitenteId, Long destinatarioId) {
 
         Envio envio = envioService.savePaquete(peso, alto, ancho, remitenteId, destinatarioId);
 
